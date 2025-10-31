@@ -1,197 +1,411 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Mode for Claude Code</title>
+    <meta name="description" content="Interface vocale pour Claude Code avec fonctionnalités d'accessibilité avancées">
+    <title>Mode Vocal pour Claude Code - Interface Accessible</title>
     <style>
+        /* ========================================
+           CSS CUSTOM PROPERTIES (Design Tokens)
+           ======================================== */
+        :root {
+            /* Color Palette - Light Mode */
+            --color-primary: #007AFF;
+            --color-primary-hover: #0056CC;
+            --color-primary-light: #E5F2FF;
+            --color-success: #28A745;
+            --color-success-hover: #218838;
+            --color-danger: #DC3545;
+            --color-danger-hover: #C82333;
+            --color-warning: #FFC107;
+            --color-warning-bg: #FFF3CD;
+            --color-info: #17A2B8;
+            --color-info-bg: #D1ECF1;
+
+            /* Neutral Colors */
+            --color-background: #F5F7FA;
+            --color-surface: #FFFFFF;
+            --color-surface-hover: #F8F9FA;
+            --color-border: #DEE2E6;
+            --color-border-focus: #007AFF;
+            --color-text-primary: #212529;
+            --color-text-secondary: #6C757D;
+            --color-text-tertiary: #ADB5BD;
+            --color-text-on-primary: #FFFFFF;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+            --shadow-focus: 0 0 0 4px rgba(0, 122, 255, 0.25);
+
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+
+            /* Typography */
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Animation Preferences */
+            --animation-duration: 0.3s;
+        }
+
+        /* Dark Mode Colors */
+        [data-theme="dark"] {
+            --color-primary: #409EFF;
+            --color-primary-hover: #66B1FF;
+            --color-primary-light: #1A3A52;
+            --color-success: #67C23A;
+            --color-success-hover: #85CE61;
+            --color-danger: #F56C6C;
+            --color-danger-hover: #F78989;
+            --color-warning: #E6A23C;
+            --color-warning-bg: #2B2311;
+            --color-info: #409EFF;
+            --color-info-bg: #172B3D;
+
+            --color-background: #0D1117;
+            --color-surface: #161B22;
+            --color-surface-hover: #1F2937;
+            --color-border: #30363D;
+            --color-border-focus: #409EFF;
+            --color-text-primary: #E6EDF3;
+            --color-text-secondary: #9198A1;
+            --color-text-tertiary: #6E7681;
+            --color-text-on-primary: #FFFFFF;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --shadow-focus: 0 0 0 4px rgba(64, 158, 255, 0.3);
+        }
+
+        /* High Contrast Mode */
+        [data-contrast="high"] {
+            --color-border: #000000;
+            --color-text-primary: #000000;
+            --shadow-focus: 0 0 0 4px #FFFF00;
+        }
+
+        [data-theme="dark"][data-contrast="high"] {
+            --color-border: #FFFFFF;
+            --color-text-primary: #FFFFFF;
+            --shadow-focus: 0 0 0 4px #FFFF00;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --animation-duration: 0.01s;
+                --transition-fast: 0.01s;
+                --transition-base: 0.01s;
+                --transition-slow: 0.01s;
+            }
+
+            * {
+                animation-duration: 0.01s !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01s !important;
+            }
+        }
+
+        /* ========================================
+           RESET & BASE STYLES
+           ======================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        /* Font size adjustment classes */
+        html.font-size-small { font-size: 14px; }
+        html.font-size-medium { font-size: 16px; }
+        html.font-size-large { font-size: 18px; }
+        html.font-size-xlarge { font-size: 20px; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+            transition: background-color var(--transition-base), color var(--transition-base);
         }
 
-        .container {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        /* ========================================
+           SKIP LINK FOR ACCESSIBILITY
+           ======================================== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-primary);
+            color: var(--color-text-on-primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-decoration: none;
+            font-weight: var(--font-weight-semibold);
+            z-index: 100;
+            border-radius: var(--radius-sm);
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 8px;
+        .skip-link:focus {
+            top: var(--spacing-sm);
+            left: var(--spacing-sm);
+            outline: 3px solid var(--color-warning);
+            outline-offset: 2px;
         }
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 24px;
+        /* ========================================
+           ACCESSIBILITY TOOLBAR
+           ======================================== */
+        .accessibility-toolbar {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
         }
 
-        .input-section {
-            margin-bottom: 24px;
+        .accessibility-toolbar h2 {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-primary);
         }
 
-        .input-group {
+        .accessibility-controls {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        #utteranceInput {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        #utteranceInput:focus {
-            outline: none;
-            border-color: #007AFF;
-        }
-
-        #sendBtn {
-            background: #007AFF;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        #sendBtn:hover {
-            background: #0056CC;
-        }
-
-        #sendBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .utterances-section h3 {
-            color: #333;
-            margin-bottom: 16px;
-        }
-
-        .utterances-list {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        .utterance-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
             align-items: center;
         }
 
-        .utterance-item:last-child {
-            border-bottom: none;
+        .accessibility-group {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+            padding: var(--spacing-sm);
+            background: var(--color-background);
+            border-radius: var(--radius-sm);
         }
 
-        .utterance-text {
-            flex: 1;
-            margin-right: 12px;
+        .accessibility-group label {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text-secondary);
+            white-space: nowrap;
         }
 
-        .utterance-meta {
-            font-size: 12px;
-            color: #666;
-            text-align: right;
+        /* ========================================
+           MAIN CONTAINER
+           ======================================== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            transition: background-color var(--transition-base);
         }
 
-        .utterance-status {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-
-        .status-pending {
-            background: #FFF3CD;
-            color: #856404;
-        }
-
-        .status-delivered {
-            background: #D1ECF1;
-            color: #0C5460;
-        }
-
-        .refresh-btn {
-            background: #6C757D;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-left: 12px;
-        }
-
-        .refresh-btn:hover {
-            background: #545B62;
-        }
-
-        .empty-state {
+        /* ========================================
+           HEADER
+           ======================================== */
+        .header {
+            margin-bottom: var(--spacing-xl);
             text-align: center;
-            color: #666;
-            padding: 12px 16px;
-            font-style: italic;
+        }
+
+        .header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.2;
+        }
+
+        .header .subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            font-weight: var(--font-weight-normal);
+        }
+
+        /* ========================================
+           BUTTONS
+           ======================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            white-space: nowrap;
+            min-height: 48px; /* WCAG touch target size */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:focus-visible {
+            outline: none;
+            box-shadow: var(--shadow-focus);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: var(--color-text-on-primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: var(--color-text-on-primary);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: var(--color-success-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: var(--color-danger);
+            color: var(--color-text-on-primary);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: var(--color-danger-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--color-text-secondary);
+            color: var(--color-text-on-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--color-text-primary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-lg {
+            font-size: var(--font-size-lg);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            min-height: 56px;
+        }
+
+        .btn-sm {
+            font-size: var(--font-size-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            min-height: 40px;
+        }
+
+        /* ========================================
+           VOICE CONTROLS SECTION
+           ======================================== */
+        .voice-section {
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--color-border);
         }
 
         .voice-controls {
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: var(--spacing-md);
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: var(--spacing-lg);
         }
 
         #listenBtn {
-            background: #28A745;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #listenBtn:hover {
-            background: #218838;
+            width: 100%;
+            max-width: 400px;
+            font-size: var(--font-size-xl);
         }
 
         #listenBtn.listening {
-            background: #DC3545;
+            background: var(--color-danger);
+            animation: pulse-button var(--animation-duration) ease-in-out infinite alternate;
         }
 
-        #listenBtn.listening:hover {
-            background: #C82333;
-        }
-
-        #listenBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        @keyframes pulse-button {
+            from { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            to { box-shadow: 0 0 0 12px rgba(220, 53, 69, 0); }
         }
 
         .listening-indicator {
             display: none;
             align-items: center;
-            gap: 8px;
-            color: #DC3545;
-            font-weight: 500;
+            gap: var(--spacing-md);
+            color: var(--color-danger);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-lg);
+            padding: var(--spacing-md);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--color-danger);
         }
 
         .listening-indicator.active {
@@ -199,175 +413,179 @@
         }
 
         .listening-dot {
-            width: 8px;
-            height: 8px;
-            background: #DC3545;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            width: 16px;
+            height: 16px;
+            background: var(--color-danger);
+            border-radius: var(--radius-full);
+            animation: pulse-dot 1.5s infinite;
         }
 
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.3;
-            }
-
-            100% {
-                opacity: 1;
-            }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
         }
 
         .interim-text {
-            padding: 12px;
-            background: #F8F9FA;
-            border: 1px solid #DEE2E6;
-            border-radius: 8px;
-            margin-bottom: 16px;
+            padding: var(--spacing-lg);
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
             font-style: italic;
-            color: #6C757D;
-            min-height: 44px;
-            /* Maintain minimum height to prevent collapse */
-            max-height: 120px;
-            /* Prevent excessive growth */
+            min-height: 80px;
+            max-height: 160px;
             overflow-y: auto;
-            /* Add scroll if content is too long */
-            transition: color 0.2s ease-in-out;
+            transition: all var(--transition-base);
+            line-height: 1.6;
         }
 
         .interim-text.active {
-            color: #333;
-            /* Darker color for actual speech */
+            color: var(--color-text-primary);
             font-style: normal;
+            border-color: var(--color-primary);
+            background: var(--color-surface-hover);
         }
 
-        .mic-icon {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
+        .interim-text:empty::before {
+            content: 'Your speech will appear here in real-time...';
+            color: var(--color-text-tertiary);
         }
 
+        /* ========================================
+           TTS SETTINGS SECTION
+           ======================================== */
         .tts-settings {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 24px;
+            background: var(--color-surface-hover);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+            border: 2px solid var(--color-border);
         }
 
-        .tts-settings h4 {
-            margin-top: 0;
-            margin-bottom: 0;
-            color: #333;
+        .tts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .tts-header h2 {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin: 0;
         }
 
         .tts-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .tts-controls.hidden {
+            display: none;
+        }
+
+        .form-group {
             display: flex;
-            gap: 16px;
-            align-items: center;
-            flex-wrap: wrap;
-            width: 100%;
-            box-sizing: border-box;
-            margin-top: 16px;
+            flex-direction: column;
+            gap: var(--spacing-sm);
         }
 
-        .tts-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .form-group label {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
         }
 
-        .tts-control label {
-            font-size: 14px;
-            color: #666;
+        .form-control {
+            padding: var(--spacing-md);
+            font-size: var(--font-size-base);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-surface);
+            color: var(--color-text-primary);
+            transition: all var(--transition-fast);
+            min-height: 48px;
         }
 
-        .tts-control select {
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .tts-control input {
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-border-focus);
+            box-shadow: var(--shadow-focus);
         }
 
-        .tts-test-btn {
-            background: #6C757D;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
+        .form-control:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        select.form-control {
             cursor: pointer;
         }
 
-        .tts-test-btn:hover {
-            background: #545B62;
-        }
-
-        .rate-warning,
-        .system-voice-info {
-            font-size: 12px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 8px 0;
-            display: flex;
+        .range-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--spacing-sm);
             align-items: center;
-            gap: 8px;
         }
 
-        .rate-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--color-border);
+            outline: none;
         }
 
-        .system-voice-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
         }
 
-        .system-voice-info a {
-            color: #0c5460;
-            font-weight: bold;
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
         }
 
-        .warning-icon,
-        .info-icon {
-            font-size: 16px;
+        input[type="range"]:focus::-webkit-slider-thumb {
+            box-shadow: var(--shadow-focus);
         }
 
-        .info-message {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 8px;
-            margin-bottom: 16px;
+        input[type="range"]:focus::-moz-range-thumb {
+            box-shadow: var(--shadow-focus);
         }
 
-        .info-message .empty-state {
-            color: #0c5460;
-            padding: 20px;
-            font-style: normal;
+        input[type="number"] {
+            width: 80px;
         }
 
-        /* Toggle switch styles */
+        /* ========================================
+           TOGGLE SWITCH
+           ======================================== */
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 26px;
+            width: 60px;
+            height: 32px;
         }
 
         .switch input {
@@ -383,116 +601,505 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
-            transition: .3s;
-            border-radius: 26px;
+            background-color: var(--color-border);
+            transition: var(--transition-base);
+            border-radius: var(--radius-full);
+            border: 2px solid var(--color-border);
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .3s;
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--color-surface);
+            transition: var(--transition-base);
             border-radius: 50%;
+            box-shadow: var(--shadow-sm);
         }
 
-        input:checked+.slider {
-            background-color: #007AFF;
+        input:checked + .slider {
+            background-color: var(--color-success);
+            border-color: var(--color-success);
         }
 
-        input:checked+.slider:before {
-            transform: translateX(24px);
+        input:checked + .slider:before {
+            transform: translateX(28px);
+        }
+
+        input:focus-visible + .slider {
+            box-shadow: var(--shadow-focus);
+        }
+
+        /* ========================================
+           ALERT MESSAGES
+           ======================================== */
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 2px solid;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .alert-warning {
+            background: var(--color-warning-bg);
+            border-color: var(--color-warning);
+            color: var(--color-text-primary);
+        }
+
+        .alert-info {
+            background: var(--color-info-bg);
+            border-color: var(--color-info);
+            color: var(--color-text-primary);
+        }
+
+        .alert-icon {
+            font-size: var(--font-size-xl);
+            flex-shrink: 0;
+        }
+
+        .alert a {
+            color: inherit;
+            font-weight: var(--font-weight-bold);
+            text-decoration: underline;
+        }
+
+        .alert.hidden {
+            display: none;
+        }
+
+        /* ========================================
+           UTTERANCES SECTION
+           ======================================== */
+        .utterances-section {
+            margin-top: var(--spacing-xl);
+        }
+
+        .utterances-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .utterances-header h2 {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .utterances-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .utterances-list {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            background: var(--color-surface);
+        }
+
+        .utterance-item {
+            padding: var(--spacing-lg);
+            border-bottom: 2px solid var(--color-border);
+            transition: background-color var(--transition-fast);
+        }
+
+        .utterance-item:last-child {
+            border-bottom: none;
+        }
+
+        .utterance-item:hover {
+            background: var(--color-surface-hover);
+        }
+
+        .utterance-item:focus-within {
+            background: var(--color-surface-hover);
+            outline: 3px solid var(--color-primary);
+            outline-offset: -3px;
+        }
+
+        .utterance-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+        }
+
+        .utterance-text {
+            flex: 1;
+            font-size: var(--font-size-base);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .utterance-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: var(--spacing-xs);
+            flex-shrink: 0;
+        }
+
+        .utterance-time {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+
+        .utterance-status {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-bold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: var(--color-warning-bg);
+            color: var(--color-warning);
+        }
+
+        .status-delivered {
+            background: var(--color-info-bg);
+            color: var(--color-info);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-lg);
+            font-style: italic;
+        }
+
+        /* ========================================
+           ICONS
+           ======================================== */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .icon-lg {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+        @media (max-width: 768px) {
+            body {
+                padding: var(--spacing-md);
+            }
+
+            .container {
+                padding: var(--spacing-lg);
+            }
+
+            .header h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .accessibility-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .accessibility-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tts-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .utterances-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .utterances-actions .btn {
+                width: 100%;
+            }
+
+            .utterance-content {
+                flex-direction: column;
+            }
+
+            .utterance-meta {
+                align-items: flex-start;
+            }
+        }
+
+        /* ========================================
+           LOADING STATES
+           ======================================== */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        /* ========================================
+           FOCUS VISIBLE POLYFILL
+           ======================================== */
+        *:focus {
+            outline: none;
+        }
+
+        *:focus-visible {
+            outline: 3px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        /* ========================================
+           PRINT STYLES
+           ======================================== */
+        @media print {
+            .accessibility-toolbar,
+            .voice-controls,
+            .tts-settings,
+            .utterances-actions {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Voice Mode for Claude Code</h1>
+    <!-- Skip to main content link for keyboard users -->
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
-
-
-        <div class="input-section">
-            <div class="voice-controls">
-                <button id="listenBtn">
-                    <svg class="mic-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path
-                            d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1ZM19 12C19 15.53 16.39 18.44 13 18.93V22H11V18.93C7.61 18.44 5 15.53 5 12H7C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12H19Z" />
-                    </svg>
-                    <span id="listenBtnText">Start Listening</span>
-                </button>
-                <div class="listening-indicator" id="listeningIndicator">
-                    <div class="listening-dot"></div>
-                    <span>Listening...</span>
-                </div>
+    <!-- Accessibility Toolbar -->
+    <div class="accessibility-toolbar" role="region" aria-label="Paramètres d'accessibilité">
+        <h2 id="accessibility-heading">Paramètres d'Accessibilité</h2>
+        <div class="accessibility-controls" role="group" aria-labelledby="accessibility-heading">
+            <div class="accessibility-group">
+                <label for="theme-select">Thème :</label>
+                <select id="theme-select" class="form-control" aria-describedby="theme-description">
+                    <option value="light">Mode Clair</option>
+                    <option value="dark">Mode Sombre</option>
+                    <option value="auto">Automatique (Système)</option>
+                </select>
+                <span id="theme-description" class="sr-only">Sélectionnez votre thème de couleur préféré</span>
             </div>
 
-            <div class="interim-text" id="interimText">Start speaking and your words will appear here...</div>
-        </div>
-        <div class="tts-settings">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h4>Allow Claude to speak back to you</h4>
-                <label class="switch">
-                    <input type="checkbox" id="voiceResponsesToggle">
-                    <span class="slider"></span>
+            <div class="accessibility-group">
+                <label for="font-size-select">Taille du Texte :</label>
+                <select id="font-size-select" class="form-control" aria-describedby="font-size-description">
+                    <option value="small">Petit</option>
+                    <option value="medium" selected>Moyen</option>
+                    <option value="large">Grand</option>
+                    <option value="xlarge">Très Grand</option>
+                </select>
+                <span id="font-size-description" class="sr-only">Ajustez la taille du texte pour une meilleure lisibilité</span>
+            </div>
+
+            <div class="accessibility-group">
+                <label for="contrast-toggle">
+                    <input type="checkbox" id="contrast-toggle" aria-describedby="contrast-description">
+                    Contraste Élevé
                 </label>
-            </div>
-            <div class="tts-controls" id="voiceOptions" style="display: none;">
-                <div class="tts-control">
-                    <label for="languageSelect">Language:</label>
-                    <select id="languageSelect">
-                        <option value="en-US">Loading languages...</option>
-                    </select>
-                </div>
-                <div class="tts-control">
-                    <label for="voiceSelect">Voice:</label>
-                    <select id="voiceSelect">
-                        <option value="system">Mac System Voice</option>
-                        <optgroup label="Browser Voices (Cloud)" id="cloudVoicesGroup">
-                        </optgroup>
-                        <optgroup label="Browser Voices (Local)" id="localVoicesGroup">
-                        </optgroup>
-                    </select>
-                </div>
-                <div id="systemVoiceInfo" class="system-voice-info" style="display: none;">
-                    <span class="info-icon">ℹ️</span>
-                    <span class="info-text">You can download high quality voices in your Mac settings app. See the <a
-                            href="https://github.com/johnmatthewtennant/mcp-voice-hooks?tab=readme-ov-file#voice-responses"
-                            target="_blank">README</a></span>
-                </div>
-                <div id="rateWarning" class="rate-warning" style="display: none;">
-                    <span class="warning-icon">⚠️</span>
-                    <span class="warning-text">Google voices may not respond well to rate adjustments</span>
-                </div>
-                <div class="tts-control">
-                    <label for="speechRate">Speaking Rate:</label>
-                    <input type="range" id="speechRate" min="0.5" max="5" step="0.1" value="1">
-                    <input type="number" id="speechRateInput" min="0.5" max="5" step="0.1" value="1">
-                </div>
-                <button class="tts-test-btn" id="testTTSBtn">Test Voice</button>
-            </div>
-        </div>
-
-        <div class="utterances-section">
-            <h3>
-                Recent Utterances
-                <button class="refresh-btn" id="refreshBtn">Refresh</button>
-                <button class="refresh-btn" id="clearAllBtn" style="background: #DC3545; margin-left: 8px;">Clear
-                    All</button>
-            </h3>
-            <div class="info-message" id="infoMessage" style="display: none;">
-                <div class="empty-state">You need to send one message in the Claude code CLI to start voice interaction
-                </div>
-            </div>
-            <div class="utterances-list" id="utterancesList">
-                <div class="empty-state">Nothing yet.</div>
+                <span id="contrast-description" class="sr-only">Activez le mode contraste élevé pour une meilleure visibilité</span>
             </div>
         </div>
     </div>
+
+    <!-- Main Container -->
+    <main id="main-content" class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Mode Vocal pour Claude Code</h1>
+            <p class="subtitle">Interface vocale accessible</p>
+        </header>
+
+        <!-- Voice Controls Section -->
+        <section class="voice-section" aria-labelledby="voice-section-heading">
+            <h2 id="voice-section-heading" class="sr-only">Contrôles d'Entrée Vocale</h2>
+
+            <div class="voice-controls">
+                <button
+                    id="listenBtn"
+                    class="btn btn-success btn-lg"
+                    type="button"
+                    aria-pressed="false"
+                    aria-describedby="listen-description">
+                    <svg class="icon icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1ZM19 12C19 15.53 16.39 18.44 13 18.93V22H11V18.93C7.61 18.44 5 15.53 5 12H7C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12H19Z" />
+                    </svg>
+                    <span id="listenBtnText">Commencer l'Écoute</span>
+                </button>
+                <span id="listen-description" class="sr-only">Appuyez pour activer la reconnaissance vocale. Appuyez à nouveau pour arrêter l'écoute.</span>
+
+                <div
+                    class="listening-indicator"
+                    id="listeningIndicator"
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true">
+                    <div class="listening-dot" aria-hidden="true"></div>
+                    <span>À l'écoute de votre voix...</span>
+                </div>
+            </div>
+
+            <div
+                class="interim-text"
+                id="interimText"
+                role="log"
+                aria-live="polite"
+                aria-atomic="true"
+                aria-label="Sortie de reconnaissance vocale">
+            </div>
+        </section>
+
+        <!-- TTS Settings Section -->
+        <section class="tts-settings" aria-labelledby="tts-section-heading">
+            <div class="tts-header">
+                <h2 id="tts-section-heading">Paramètres de Réponse Vocale</h2>
+                <label class="switch" aria-describedby="tts-toggle-description">
+                    <input
+                        type="checkbox"
+                        id="voiceResponsesToggle"
+                        aria-label="Permettre à Claude de vous répondre vocalement"
+                        aria-pressed="false">
+                    <span class="slider"></span>
+                </label>
+                <span id="tts-toggle-description" class="sr-only">Basculer pour activer ou désactiver les réponses vocales de Claude</span>
+            </div>
+
+            <div class="tts-controls hidden" id="voiceOptions" role="group" aria-labelledby="tts-section-heading">
+                <div class="form-group">
+                    <label for="languageSelect">Langue :</label>
+                    <select id="languageSelect" class="form-control" aria-describedby="language-description">
+                        <option value="fr-FR">Chargement des langues...</option>
+                    </select>
+                    <span id="language-description" class="sr-only">Sélectionnez la langue pour les réponses vocales</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="voiceSelect">Voix :</label>
+                    <select id="voiceSelect" class="form-control" aria-describedby="voice-description">
+                        <option value="system">Voix Système Mac</option>
+                        <optgroup label="Voix Navigateur (Cloud)" id="cloudVoicesGroup"></optgroup>
+                        <optgroup label="Voix Navigateur (Locales)" id="localVoicesGroup"></optgroup>
+                    </select>
+                    <span id="voice-description" class="sr-only">Sélectionnez la voix pour les réponses</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="speechRate">Vitesse de Parole :</label>
+                    <div class="range-group">
+                        <input
+                            type="range"
+                            id="speechRate"
+                            min="0.5"
+                            max="5"
+                            step="0.1"
+                            value="1"
+                            aria-describedby="rate-description"
+                            aria-valuemin="0.5"
+                            aria-valuemax="5"
+                            aria-valuenow="1">
+                        <input
+                            type="number"
+                            id="speechRateInput"
+                            class="form-control"
+                            min="0.5"
+                            max="5"
+                            step="0.1"
+                            value="1"
+                            aria-label="Entrée numérique de la vitesse de parole">
+                    </div>
+                    <span id="rate-description" class="sr-only">Ajustez la vitesse de parole de 0.5 (plus lent) à 5 (plus rapide)</span>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-secondary" id="testTTSBtn" type="button">
+                        Tester la Voix
+                    </button>
+                </div>
+            </div>
+
+            <div id="systemVoiceInfo" class="alert alert-info hidden" role="status">
+                <span class="alert-icon" aria-hidden="true">ℹ️</span>
+                <span>Vous pouvez télécharger des voix de haute qualité dans les paramètres système de votre Mac. Voir le <a href="https://github.com/johnmatthewtennant/mcp-voice-hooks?tab=readme-ov-file#voice-responses" target="_blank" rel="noopener noreferrer">README</a></span>
+            </div>
+
+            <div id="rateWarning" class="alert alert-warning hidden" role="alert">
+                <span class="alert-icon" aria-hidden="true">⚠️</span>
+                <span>Les voix Google peuvent ne pas bien répondre aux ajustements de vitesse</span>
+            </div>
+        </section>
+
+        <!-- Utterances Section -->
+        <section class="utterances-section" aria-labelledby="utterances-heading">
+            <div class="utterances-header">
+                <h2 id="utterances-heading">Messages Récents</h2>
+                <div class="utterances-actions" role="group" aria-label="Actions de la liste de messages">
+                    <button
+                        class="btn btn-secondary btn-sm"
+                        id="refreshBtn"
+                        type="button"
+                        aria-label="Actualiser la liste des messages">
+                        Actualiser
+                    </button>
+                    <button
+                        class="btn btn-danger btn-sm"
+                        id="clearAllBtn"
+                        type="button"
+                        aria-label="Effacer tous les messages">
+                        Tout Effacer
+                    </button>
+                </div>
+            </div>
+
+            <div id="infoMessage" class="alert alert-info hidden" role="status">
+                <span class="alert-icon" aria-hidden="true">ℹ️</span>
+                <span>Vous devez envoyer un message dans la CLI de Claude Code pour démarrer l'interaction vocale</span>
+            </div>
+
+            <div
+                class="utterances-list"
+                id="utterancesList"
+                role="log"
+                aria-live="polite"
+                aria-label="Liste des messages vocaux récents">
+                <div class="empty-state">Aucun message pour le moment.</div>
+            </div>
+        </section>
+    </main>
 
     <script src="app.js"></script>
 </body>
