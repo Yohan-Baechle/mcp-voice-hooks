@@ -1,5 +1,5 @@
 # TypeScript compiled output
-dist/
+# dist/ - Commented out: we commit dist/ to enable GitHub installs without build step
 
 # Node modules
 node_modules/

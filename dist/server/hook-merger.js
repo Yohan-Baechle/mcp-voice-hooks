@@ -1,0 +1,56 @@
+// src/server/hook-merger.ts
+function removeVoiceHooks(hooks = {}) {
+  const cleaned = {};
+  const voiceHookPattern = /MCP_VOICE_HOOKS_PORT/;
+  for (const [hookType, hookArray] of Object.entries(hooks)) {
+    cleaned[hookType] = hookArray.filter((hookConfig) => {
+      return !hookConfig.hooks.some(
+        (hook) => voiceHookPattern.test(hook.command)
+      );
+    });
+    if (cleaned[hookType].length === 0) {
+      delete cleaned[hookType];
+    }
+  }
+  return cleaned;
+}
+function replaceVoiceHooks(existingHooks = {}, voiceHooks) {
+  const cleaned = removeVoiceHooks(existingHooks);
+  const result = JSON.parse(JSON.stringify(cleaned));
+  for (const [hookType, hookArray] of Object.entries(voiceHooks)) {
+    if (!result[hookType]) {
+      result[hookType] = hookArray;
+    } else {
+      result[hookType].push(...hookArray);
+    }
+  }
+  return result;
+}
+function areHooksEqual(hooks1 = {}, hooks2 = {}) {
+  const types1 = Object.keys(hooks1).sort();
+  const types2 = Object.keys(hooks2).sort();
+  if (types1.join(",") !== types2.join(",")) {
+    return false;
+  }
+  for (const hookType of types1) {
+    const configs1 = hooks1[hookType];
+    const configs2 = hooks2[hookType];
+    if (configs1.length !== configs2.length) {
+      return false;
+    }
+    const normalized1 = configs1.map((config) => JSON.stringify(config)).sort();
+    const normalized2 = configs2.map((config) => JSON.stringify(config)).sort();
+    for (let i = 0; i < normalized1.length; i++) {
+      if (normalized1[i] !== normalized2[i]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+export {
+  areHooksEqual,
+  removeVoiceHooks,
+  replaceVoiceHooks
+};
+//# sourceMappingURL=hook-merger.js.map

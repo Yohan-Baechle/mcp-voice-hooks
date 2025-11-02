@@ -46,7 +46,7 @@ export function initIcons() {
   if (listenIcon) {
     listenIcon.innerHTML = IconMicrophone;
     const svg = listenIcon.querySelector("svg");
-    if (svg) svg.setAttribute("class", "size-6");
+    if (svg) svg.setAttribute("class", "size-12");
   }
 
   const voiceControlTitle = document.getElementById("voice-control-title");
@@ -54,7 +54,7 @@ export function initIcons() {
     const span = document.createElement("span");
     span.innerHTML = IconMicrophoneTitle;
     const svg = span.querySelector("svg");
-    if (svg) svg.setAttribute("class", "size-5 mr-2");
+    if (svg) svg.setAttribute("class", "size-8 mr-2");
     voiceControlTitle.insertBefore(span, voiceControlTitle.firstChild);
   }
 
@@ -63,7 +63,7 @@ export function initIcons() {
     const span = document.createElement("span");
     span.innerHTML = IconHistory;
     const svg = span.querySelector("svg");
-    if (svg) svg.setAttribute("class", "size-5 mr-2");
+    if (svg) svg.setAttribute("class", "size-8 mr-2");
     messagesTitle.insertBefore(span, messagesTitle.firstChild);
   }
 

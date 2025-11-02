@@ -10,10 +10,6 @@ Optionally enable text-to-speech to have Claude speak back to you.
 
 Voice recognition and text-to-speech are handled by the browser, so there is nothing to download, and no API keys are needed.
 
-## Demo Video
-
-[![Demo Video](https://img.youtube.com/vi/GbDatJtm8_k/0.jpg)](https://youtu.be/GbDatJtm8_k)
-
 ## Installation
 
 Installation is easy.
@@ -27,8 +23,8 @@ npm install -g @anthropic-ai/claude-code
 ### 2. Install Voice Mode
 
 ```bash
-npx mcp-voice-hooks@latest install-hooks
-claude mcp add voice-hooks npx mcp-voice-hooks@latest
+npx github:Yohan-Baechle/mcp-voice-hooks#develop install-hooks
+claude mcp add voice-hooks npx github:Yohan-Baechle/mcp-voice-hooks#develop
 ```
 
 ## Usage
@@ -89,7 +85,7 @@ There is a bug in Safari that prevents browser text-to-speech from loading high-
 The hooks are automatically installed/updated when the MCP server starts. However, if you need to manually install or reconfigure the hooks:
 
 ```bash
-npx mcp-voice-hooks install-hooks
+npx github:Yohan-Baechle/mcp-voice-hooks#develop install-hooks
 ```
 
 This will configure your project's `.claude/settings.local.json` with the necessary hook commands.
@@ -105,7 +101,7 @@ claude mcp remove voice-hooks
 
 ```bash
 # Also remove hooks and settings
-npx mcp-voice-hooks uninstall
+npx github:Yohan-Baechle/mcp-voice-hooks#develop uninstall
 ```
 
 This will:
@@ -119,7 +115,7 @@ If you're developing mcp-voice-hooks itself:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/johnmatthewtennant/mcp-voice-hooks.git
+git clone https://github.com/Yohan-Baechle/mcp-voice-hooks.git
 cd mcp-voice-hooks
 
 # 2. Install dependencies
