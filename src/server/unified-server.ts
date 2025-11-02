@@ -98,3 +98,13 @@ if (IS_MCP_MANAGED) {
     "[MCP] Skipping MCP server initialization (not in MCP-managed mode)"
   );
 }
+
+process.on('SIGTERM', () => {
+  debugLog('[Shutdown] Received SIGTERM signal, shutting down gracefully...');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  debugLog('[Shutdown] Received SIGINT signal, shutting down gracefully...');
+  process.exit(0);
+});
