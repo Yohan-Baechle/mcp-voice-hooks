@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
-import { replaceVoiceHooks, areHooksEqual, removeVoiceHooks } from '../dist/hook-merger.js';
+import { replaceVoiceHooks, areHooksEqual, removeVoiceHooks } from '../dist/server/hook-merger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -146,7 +146,7 @@ async function ensureHooksInstalled() {
 
 // Run the MCP server
 async function runMCPServer() {
-  const serverPath = path.join(__dirname, '..', 'dist', 'unified-server.js');
+  const serverPath = path.join(__dirname, '..', 'dist', 'server', 'unified-server.js');
 
   // Run the compiled JavaScript server
   const child = spawn('node', [serverPath, '--mcp-managed'], {
