@@ -1,0 +1,81 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* ========================================
+   CUSTOM STYLES
+   ======================================== */
+
+/* Font size adjustments */
+html.font-size-small {
+  font-size: 14px;
+}
+html.font-size-medium {
+  font-size: 16px;
+}
+html.font-size-large {
+  font-size: 18px;
+}
+html.font-size-xlarge {
+  font-size: 20px;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Listening button animation */
+#listenBtn.listening {
+  animation: pulse-button 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-button {
+  from {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+  }
+  to {
+    box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
+  }
+}
+
+/* Active interim text */
+#interimText.active {
+  border-color: hsl(var(--p));
+}
+
+/* Icon hover animations - simple and clean */
+label[for="main-drawer"]:hover svg {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Refresh button - rotate icon on hover */
+#refreshBtn svg {
+  transition: transform 0.3s ease;
+}
+
+#refreshBtn:hover svg {
+  transform: rotate(180deg);
+}
+
+/* Clear button - fill icon on hover */
+#clearAllBtn svg {
+  transition: all 0.2s ease;
+}
+
+#clearAllBtn:hover svg {
+  fill: currentColor;
+  stroke-width: 1;
+}
+
+/* Theme toggle button - scale on hover */
+#theme-toggle-btn:hover svg {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}

@@ -1,5 +1,16 @@
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST \"http://localhost:${MCP_VOICE_HOOKS_PORT:-5111}/api/hooks/user-prompt-submit\" || echo '{\"decision\": \"approve\", \"reason\": \"voice-hooks not running\"}'"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",

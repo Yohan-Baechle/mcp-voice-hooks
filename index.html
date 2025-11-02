@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interface vocale pour Claude Code">
+    <title>Mode Vocal pour Claude Code</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+
+<body>
+    <!-- Drawer Layout -->
+    <div class="drawer">
+        <input id="main-drawer" type="checkbox" class="drawer-toggle" />
+
+        <!-- Main Content -->
+        <div class="drawer-content">
+            <!-- Navbar -->
+            <div class="navbar bg-base-200">
+                <div class="flex-none">
+                    <label for="main-drawer" class="btn btn-square btn-ghost"></label>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-xl font-bold">Mode Vocal pour Claude Code</h1>
+                </div>
+                <div class="flex-none">
+                    <button class="btn btn-ghost btn-circle" id="theme-toggle-btn" type="button" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="p-4">
+                <!-- Voice Controls Card -->
+                <div class="card bg-base-100 shadow-xl mb-6">
+                    <div class="card-body">
+                        <h2 class="card-title" id="voice-control-title">
+                            Contrôle Vocal
+                        </h2>
+
+                        <div class="flex flex-col items-center gap-4">
+                            <button
+                                id="listenBtn"
+                                class="btn btn-success btn-lg gap-2 min-w-64"
+                                type="button"
+                                aria-pressed="false">
+                                <span id="listenIcon"></span>
+                                <span id="listenBtnText">Commencer l'Écoute</span>
+                            </button>
+                        </div>
+
+                        <textarea
+                            id="interimText"
+                            class="textarea textarea-bordered w-full mt-4 min-h-24 resize-none"
+                            placeholder="Votre parole apparaîtra ici en temps réel..."
+                            readonly
+                            role="log"
+                            aria-live="polite"></textarea>
+                    </div>
+                </div>
+
+                <!-- Messages Section -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="card-title" id="messages-title">
+                                Messages Récents
+                            </h2>
+                            <div class="join">
+                                <button class="btn btn-sm join-item" id="refreshBtn" type="button">
+                                    Actualiser
+                                </button>
+                                <button class="btn btn-sm btn-error join-item" id="clearAllBtn" type="button">
+                                    Tout Effacer
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="infoMessage" class="alert alert-info hidden mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Vous devez envoyer un message dans la CLI de Claude Code pour démarrer l'interaction vocale</span>
+                        </div>
+
+                        <div id="utterancesList" class="overflow-y-auto max-h-96" role="log" aria-live="polite">
+                            <!-- Chat bubbles will be inserted here dynamically -->
+                            <div class="flex justify-center items-center h-48">
+                                <p class="text-base-content opacity-50">Aucun message pour le moment.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="drawer-side">
+            <label for="main-drawer" class="drawer-overlay"></label>
+            <div class="menu p-4 w-80 min-h-full bg-base-200">
+                <!-- Sidebar Header -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-bold mb-4">Paramètres</h2>
+                </div>
+
+                <!-- Font Size -->
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Taille du Texte</span>
+                    </label>
+                    <select id="font-size-select" class="select select-bordered w-full">
+                        <option value="small">Petit</option>
+                        <option value="medium" selected>Moyen</option>
+                        <option value="large">Grand</option>
+                        <option value="xlarge">Très Grand</option>
+                    </select>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Voice Response Settings -->
+                <div class="form-control mb-4">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Réponses Vocales</span>
+                        <input type="checkbox" id="voiceResponsesToggle" class="toggle toggle-success" />
+                    </label>
+                </div>
+
+                <!-- Voice Options (shown when toggle is on) -->
+                <div id="voiceOptions" class="hidden space-y-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Langue</span>
+                        </label>
+                        <select id="languageSelect" class="select select-bordered w-full select-sm">
+                            <option value="fr-FR">Chargement des langues...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Voix</span>
+                        </label>
+                        <select id="voiceSelect" class="select select-bordered w-full select-sm">
+                            <option value="system">Voix Système Mac</option>
+                            <optgroup label="Voix Navigateur (Cloud)" id="cloudVoicesGroup"></optgroup>
+                            <optgroup label="Voix Navigateur (Locales)" id="localVoicesGroup"></optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Vitesse de Parole</span>
+                        </label>
+                        <div class="flex gap-2 items-center">
+                            <input
+                                type="range"
+                                id="speechRate"
+                                min="0.5"
+                                max="5"
+                                step="0.1"
+                                value="1"
+                                class="range range-primary range-sm flex-1" />
+                            <input
+                                type="number"
+                                id="speechRateInput"
+                                class="input input-bordered input-sm w-16"
+                                min="0.5"
+                                max="5"
+                                step="0.1"
+                                value="1" />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm w-full" id="testTTSBtn" type="button">
+                        Tester la Voix
+                    </button>
+
+                    <div id="systemVoiceInfo" class="alert alert-info hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="text-xs">Vous pouvez télécharger des voix de haute qualité dans les paramètres système. <a href="https://github.com/johnmatthewtennant/mcp-voice-hooks?tab=readme-ov-file#voice-responses" target="_blank" rel="noopener noreferrer" class="link">En savoir plus</a></span>
+                    </div>
+
+                    <div id="rateWarning" class="alert alert-warning hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span class="text-xs">Les voix Google peuvent ne pas bien répondre aux ajustements de vitesse</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/client/main.ts"></script>
+</body>
+
+</html>

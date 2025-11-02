@@ -2,23 +2,28 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
-    "lib": [
-      "ESNext"
-    ],
-    "rootDir": "./src",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./src/shared/*"],
+      "@client/*": ["./src/client/*"],
+      "@server/*": ["./src/server/*"]
+    }
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "frontend"
   ]
 }
