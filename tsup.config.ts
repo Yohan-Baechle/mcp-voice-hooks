@@ -1,10 +1,10 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/unified-server.ts', 'src/hook-merger.ts'],
+  entry: ['src/server/unified-server.ts', 'src/server/hook-merger.ts'],
   format: ['esm'],
   target: 'esnext',
-  outDir: 'dist',
+  outDir: 'dist/server',
   clean: true,
   sourcemap: true,
   dts: {
